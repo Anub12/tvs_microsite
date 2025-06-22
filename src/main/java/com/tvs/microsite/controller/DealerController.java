@@ -46,9 +46,14 @@ public class DealerController {
     }
 
     @PostMapping("/{dealerId}/vote")
-    public void voteForDealer(@PathVariable Long dealerId, @RequestParam String userId) {
-        dealerService.voteForDealer(dealerId, userId);
+    public ResponseEntity<?> voteForDealer(@PathVariable Long dealerId, @RequestParam String userId) {
+    try {
+        Dealer dealer = dealerService.voteForDealer(dealerId, userId);
+        return ResponseEntity.ok(dealer);
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
+}
 
     @GetMapping("/search")
     public ResponseEntity<List<Dealer>> searchDealers(@RequestParam(required = false) String query) {

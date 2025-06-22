@@ -13,6 +13,6 @@ public interface DealerRepository extends JpaRepository<Dealer, Long> {
     @Query("SELECT d FROM Dealer d WHERE " +
             "LOWER(d.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(d.address) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(d.contact) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+            "LOWER(d.contactNumber) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Dealer> searchDealers(@Param("searchTerm") String searchTerm);
 }

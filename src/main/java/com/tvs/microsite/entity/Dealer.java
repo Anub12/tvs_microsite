@@ -28,4 +28,12 @@ public class Dealer {
     @CollectionTable(name = "voter_ids", joinColumns = @JoinColumn(name = "dealer_id"))
     @Column(name = "voter_id")
     private Set<String> voterIds = new HashSet<>();
+
+    public Set<String> getVoterIds() {
+        return voterIds;
+    }
+
+    public void setVoterIds(Set<String> voterIds) {
+        this.voterIds = voterIds;
+    }
 }
