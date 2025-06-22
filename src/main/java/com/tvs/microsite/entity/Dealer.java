@@ -4,6 +4,9 @@ package com.tvs.microsite.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Entity
 @Table(name = "dealers")
@@ -20,4 +23,9 @@ public class Dealer {
 
     @Column(columnDefinition = "integer default 0")
     private int votes;
+
+    @ElementCollection
+    @CollectionTable(name = "voter_ids", joinColumns = @JoinColumn(name = "dealer_id"))
+    @Column(name = "voter_id")
+    private Set<String> voterIds = new HashSet<>();
 }

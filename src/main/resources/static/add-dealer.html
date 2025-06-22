@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Dealer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .form-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="container mx-auto px-4 py-12">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Add New Dealer</h1>
+            <p class="text-gray-600">Fill out the form below to register a new dealer</p>
+        </div>
+
+        <!-- Add Dealer Form -->
+        <div class="bg-white rounded-xl p-8 form-shadow">
+            <form id="addDealerForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Name -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Dealer Name *</label>
+                        <input type="text" id="name" name="name" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                    </div>
+
+                    <!-- Contact Number -->
+                    <div>
+                        <label for="contactNumber" class="block text-sm font-medium text-gray-700 mb-1">Contact Number *</label>
+                        <input type="tel" id="contactNumber" name="contactNumber" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div>
+                    <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address *</label>
+                    <textarea id="address" name="address" rows="3" required
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Latitude -->
+                    <div>
+                        <label for="latitude" class="block text-sm font-medium text-gray-700 mb-1">Latitude *</label>
+                        <input type="number" step="any" id="latitude" name="latitude" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                    </div>
+
+                    <!-- Longitude -->
+                    <div>
+                        <label for="longitude" class="block text-sm font-medium text-gray-700 mb-1">Longitude *</label>
+                        <input type="number" step="any" id="longitude" name="longitude" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                    </div>
+                </div>
+
+                <!-- Location Picker (Visual) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Pick Location</label>
+                    <div class="border border-gray-300 rounded-lg h-64 bg-gray-100 flex items-center justify-center">
+                        <button type="button" onclick="getCurrentLocation()"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center">
+                            <i class="fas fa-location-arrow mr-2"></i> Use My Current Location
+                        </button>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">Click the button above or manually enter coordinates</p>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button type="submit"
+                            class="w-full gradient-bg text-white py-3 px-4 rounded-lg font-medium hover:opacity-90 transition flex items-center justify-center">
+                        <i class="fas fa-save mr-2"></i> Save Dealer
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-check text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Success!</h3>
+                    <p class="text-gray-600 mb-6">Dealer has been added successfully.</p>
+                    <button onclick="closeModal()"
+                            class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle form submission
+    document.getElementById('addDealerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const dealerData = {
+            name: document.getElementById('name').value,
+            address: document.getElementById('address').value,
+            contactNumber: document.getElementById('contactNumber').value,
+            latitude: parseFloat(document.getElementById('latitude').value),
+            longitude: parseFloat(document.getElementById('longitude').value),
+            votes: 0
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/api/dealers/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dealerData)
+            });
+
+            if (response.ok) {
+                // Show success modal
+                document.getElementById('successModal').classList.remove('hidden');
+                // Reset form
+                document.getElementById('addDealerForm').reset();
+            } else {
+                alert('Error saving dealer: ' + (await response.text()));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to save dealer');
+        }
+    });
+
+    // Get current location
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+                    document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
+                },
+                (error) => {
+                    alert('Error getting location: ' + error.message);
+                }
+            );
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    }
+
+    // Close modal
+    function closeModal() {
+        document.getElementById('successModal').classList.add('hidden');
+    }
+</script>
+</body>
+</html>

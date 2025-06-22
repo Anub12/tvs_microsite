@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Get User by ID</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 15px; cursor: pointer; }
+        #result { margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+<h1>Find User by ID</h1>
+<div class="form-group">
+    <label for="userId">User ID:</label>
+    <input type="number" id="userId" placeholder="Enter user ID">
+</div>
+<button onclick="getUser()">Find User</button>
+
+<div id="result"></div>
+
+<script>
+    async function getUser() {
+        const userId = document.getElementById('userId').value;
+        const resultDiv = document.getElementById('result');
+
+        if (!userId) {
+            resultDiv.innerHTML = '<p class="error">Please enter a user ID</p>';
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/${userId}`);
+            const data = await response.json();
+
+            if (!response.ok) {
+                resultDiv.innerHTML = `<p class="error">${data.error || 'Error fetching user'}</p>`;
+            } else {
+                // Display user data
+                resultDiv.innerHTML = `
+                        <h3>User Details</h3>
+                        <p><strong>ID:</strong> ${data.id}</p>
+                        <p><strong>Name:</strong> ${data.name}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Phone:</strong> ${data.phone}</p>
+                        <p><strong>PIN Code:</strong> ${data.pinCode}</p>
+                    `;
+            }
+        } catch (error) {
+            resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #message {
+            margin-top: 15px;
+            color: green;
+        }
+        #error {
+            margin-top: 15px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h1>Add User</h1>
+<form id="userForm">
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" name="phone" required>
+    </div>
+    <div class="form-group">
+        <label for="pinCode">PIN Code:</label>
+        <input type="text" id="pinCode" name="pinCode" required>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+<div id="message"></div>
+<div id="error"></div>
+
+<script>
+    document.getElementById('userForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const userData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            pinCode: document.getElementById('pinCode').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+
+            const data = await response.json();  // Parse JSON response
+
+            if (!response.ok) {
+                // Show backend validation error (e.g., duplicate email/phone)
+                document.getElementById('error').textContent = data.error;  // Access the error message
+                document.getElementById('message').textContent = '';
+            } else {
+                // Success
+                document.getElementById('message').textContent = 'User  added successfully!';
+                document.getElementById('error').textContent = '';
+                document.getElementById('userForm').reset();  // Clear form
+            }
+        } catch (error) {
+            document.getElementById('error').textContent = `Error: ${error.message}`;
+        }
+    });
+</script>
+</body>
+</html>
