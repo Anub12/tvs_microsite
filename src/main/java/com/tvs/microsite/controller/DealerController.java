@@ -45,9 +45,14 @@ public class DealerController {
         return ResponseEntity.ok(dealers);
     }
 
-    @PostMapping("/{id}/vote")
-    public ResponseEntity<String> voteForDealer(@PathVariable Long id) {
-        dealerService.voteForDealer(id);
-        return ResponseEntity.ok("Vote recorded successfully");
+    @PostMapping("/{dealerId}/vote")
+    public void voteForDealer(@PathVariable Long dealerId, @RequestParam String userId) {
+        dealerService.voteForDealer(dealerId, userId);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Dealer>> searchDealers(@RequestParam(required = false) String query) {
+        List<Dealer> dealers = dealerService.searchDealers(query);
+        return ResponseEntity.ok(dealers);
     }
 }

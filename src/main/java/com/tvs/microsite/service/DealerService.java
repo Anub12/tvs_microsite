@@ -50,4 +50,11 @@ public class DealerService {
         return dealerRepository.save(dealer);
     }
 
+    public List<Dealer> searchDealers(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return dealerRepository.findAll();
+        }
+        return dealerRepository.searchDealers(searchTerm.trim());
+    }
+
 }
